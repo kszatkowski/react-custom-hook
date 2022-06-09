@@ -1,3 +1,7 @@
+# UseHttp hook
+
+This is an example of a custom hook in react. You can use it across project to make API calls.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
