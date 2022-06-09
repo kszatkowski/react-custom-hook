@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useEffect, useState } from 'react';
+import useHttp from './hooks/use-http';
+import { Film, FilmResponse } from './models/film';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [films, setFilms] = useState<Film[]>([]);
+  const { isLoading, errorMessage, sendRequest } = useHttp();
+
+  const applyFilms = useCallback((responseData: FilmResponse) => {
+    const data = responseData.results.map(film => film);
+
+    setFilms(data);
+  }, []);
+
+  useEffect(() => {
+    sendRequest({ url: 'https://swapi.dev/api/films/' }, applyFilms);
+  }, [sendRequest, applyFilms]);
+
+  return <>
+    {isLoading && <p>Loading...</p>}
+    {!isLoading && errorMessage && <p>{errorMessage}</p>}
+    {!isLoading && !errorMessage && films &&
+      <>
+        <p>Start Wars films:</p>
+        <ul>
+          {films.map(film => <li key={film.episode_id}>{film.title}</li>)}
+        </ul>
+      </>
+    }
+  </>
 }
 
 export default App;
